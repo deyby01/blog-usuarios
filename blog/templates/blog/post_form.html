@@ -1,0 +1,30 @@
+{# Heredamos de la plantilla base #}
+{% extends "base.html" %}
+{# El titulo cambia debido a la condicion#}
+{% block title %}
+    {# Si el objeto tiene contenido se va a editar el post con el titulo en cuestion#}
+    {% if object %}
+        Editar "{{ object.titulo }}"
+    {# Si no tiene contenido se va a crear uno nuevo#}
+    {% else %}
+        Crear Nuevo Post
+    {% endif %}
+{% endblock title %}
+
+{# Aqui pasa lo mismo si tiene contenido es para editar sino para crear#}
+{% block content %}
+    <h1>
+        {% if object %}
+            Editar "{{ object.titulo }}"
+        {% else %}
+            Crear Nuevo Post
+        {% endif %}
+    </h1>
+    {#Formulario para escribir contenido, un form con metodo post#}
+    <form method="post">
+        {% csrf_token %}{#token de seguridad#}
+        {{ form.as_p }}{#formulario con <p>#}
+        <button type='submit'>Guardar</button>{#boton tipo submit para enviar contenido#}
+    </form>
+
+{% endblock content %}

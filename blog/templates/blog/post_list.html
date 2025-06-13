@@ -1,0 +1,47 @@
+{# Siempre extendemos de nuestra plantilla base para tener el mismo formato o diseño #}
+{% extends "base.html" %}
+{#Como podemos ver personalizamos el titulo de pestaña, si no ponemos nada se hereda el titulo de la plantilla padre#}
+{% block title %}Inicio - Mi Blog{% endblock title %}
+{# Aqui va el contenido de nuestra pagina #}
+{% block content %}
+    {# Nuestro titulo de pagina#}
+    <h1>Ultimos Posts</h1>
+    {#Esto es codigo python, un for normal#}
+    {% for post in posts %}
+        {# Envolvemos cada post en una etiqueta articulo#}
+        <article class='post-entry'>
+            {# Su nombre de post sera un link para enviar a su detalle individual#}
+            <h2>
+                <a href="{% url 'blog:post_detail' slug=post.slug%}">{{ post.titulo }}</a>
+            </h2>
+            {# Mostramos el nombre del autor y la fecha de creacion#}
+            <p class='post-meta'>
+                Publicado por {{ post.autor }} el {{ post.fecha_creacion|date:"d F, Y" }}
+            </p>
+            {#Mostramos solo los primeros 30 caracteres del contenido por eso usamos truncate, y linebre es para que solo ocupe una linea#}
+            <p>{{ post.contenido|truncatewords:30|linebreaksbr }}</p>
+        </article>
+    {#Este empty no existe en el for de python, pero es algo asi como un else que si no hay contenido muestra esto.#}
+    {% empty %}
+        <p>Aún no hay posts en el Blog. ¡Sé el primero en crear uno!</p>
+    {% endfor %}
+
+    <div class='pagination'>
+        <span class='step-links'>
+            {% if page_obj.has_previous %}
+                <a href="?page=1">&laquo; first</a>
+                <a href="?page={{ page_obj.previous_page_number }}"> < previous</a>
+            {% endif %}
+
+            <span class='current'>
+                page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span> 
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next > </a>
+                <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+            {% endif %}
+        </span>
+    </div>
+
+{% endblock content %}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    {#block title es para que las plantillas que herenden usen su propio titlo, sino se pondra Mi Blog por defecto.#}
+    <title>{% block title %}Mi Blog{% endblock title %}</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background-color: #f4f4f4; }
+        header { background-color: #333; color: white; padding: 1rem; text-align: center; }
+        header a { color: white; text-decoration: none; }
+        .container { max-width: 800px; margin: 2rem auto; padding: 2rem; background-color: white; border-radius: 5px; }
+        .post-entry { border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1rem; }
+        .post-entry:last-child { border-bottom: none; }
+        .post-meta { font-size: 0.9em; color: #666; }
+    </style>
+</head>
+<body>
+    {#header es la parte de arriba de la pagina#}
+    <header>
+        {#Mostramos el titulo y lo vinculamos al link de todos los post para que cuando den click vallan al inicio#}
+        <h1><a href="{% url 'blog:post_list' %}">El Blog de Django</a></h1>
+        {#Si un usuario no esta autenticado o logeado no podra crear posts#}
+        {% if user.is_authenticated %}
+            {#el boton crear post esta vinculado a la plantilla de crear entonces al darle click sera enviado a la pagina de crear#}
+            <a href="{% url 'blog:post_create' %}" style='color: #a7f3d0; margin-left: 20px;'>+ Nuevo Post</a>
+        {% endif %}
+    </header>
+    {# Nuestro contenido principal va en la etiqueta main dentro de content ira el contenido que las otras plantillas implementaran#}
+    <main class="container">
+        {% block content %}{% endblock content %}
+    </main>
+</body>
+</html>

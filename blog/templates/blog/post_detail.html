@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{# El titulo de la pestaña sera el mismo que del post #}
+{% block title %}{{ post.titulo }}{% endblock title %}
+
+{% block content %}
+    {# Mostramos todo el contenido dentro de una etiqueta article o articulo.#}
+    <article class="post-detail">
+        {# Mostramos titulos del post#}  
+        <h1>{{ post.titulo }}</h1>
+        {#Recorremos las categorias del post en cuestion para imprimirlas#}
+        {% for categoria in post.categorias.all %}
+            <span><strong>{{ categoria.nombre }}</strong></span>
+        {% endfor %}
+        <p class='post-meta'>
+            {#Su autor y fecha#}
+            Publicado por {{ post.autor }} el {{ post.fecha_creacion|date:"d F, Y" }}
+        </p>
+        {#Usamos un div para mostrar el contenido completo mas abajo de el titulo y autor#}
+        <div class='post-content'>
+            {#Muestra todo el contenido en una linea#}
+            {{ post.contenido|linebreaksbr }}
+        </div>
+        {#Si el usuario que esta viendo el post es el creador podra ver las opciones de editar y eliminar de lo contrario no.#}
+        {% if user == post.autor %}
+            {#Envolvemos en un div para mostralos mas abajo, cada #}
+            <div class='post-actions' style='margin-top: 20px;'>
+                {#Cada titulo de editar o eliminar esta vinculado a su respectivo link que lleva a su plantilla correspondiente#}
+                <a href="{% url 'blog:post_edit' slug=post.slug %}">Editar</a>
+                <a href="{% url 'blog:post_delete' slug=post.slug %}" style='margin-left: 10px; color: red;'>Eliminar</a>
+            </div>
+        {% endif %}
+    </article>
+    {#Creamos una linea para separa los comentarios#}
+    <hr style='margin: 40px 0;'>
+    {# Seccion que contiene los comentarios del post#}
+    <section class='comment-section'>
+        {#Subtitulo mas un contador que dice cuantos comentarios hay#}
+        <h2>Comentarios ({{ comments.count }})</h2>
+        {#Iteramos cada comentario#}
+        {% for comment in comments %}
+            {#Cada comentario estara en un div#}
+            <div class='comment' style='border-bottom: 1px solid #eee; padding-bottom: 10px; margin-bottom: 10px;'>
+                {#Ponemos en un parrafo el nombre y fecha y ponemos el nombre del autor en negrita con la etiqueta strong#}
+                <p><strong>{{ comment.autor.username }}</strong><span style='font-size: 0.8em; color: #666;'> el {{ comment.fecha_creacion|date:"d/m/Y H:i" }}</span></p>
+                {#Mostramos el contenido del comentario#}
+                <p>{{ comment.contenido|linebreaksbr }}</p>
+            </div>
+        {#Si no hay comentarios se muestra esto#}
+        {% empty %}
+            <p>Todavia no hay comentarios. ¡Sé el primero!</p>
+        {% endfor %}
+    </section>  
+    {#Si el usuario esta logeado puede dejar un comentario y se le mostrara el formulario, si no no#}
+    {% if user.is_authenticated %}
+        {# Creamos una seccion con el formulario de comentario #}
+        <section class='comment-form-section' style='margin-top: 30px;'>
+            <h3>Deja un comentario</h3>
+            {#Usamos el formulario en metodo post para evitar errores de seguridad#}
+            <form method="post">
+                {#el token de seguridad siempre va en los fomularios o info personal#}
+                {% csrf_token %}
+                {#Formulario como parrafo#}
+                {{ comment_form.as_p }}
+                {#Boton tipo submit para enviar la info escrita.#}
+                <button type='submit'>Enviar Comentario</button>
+            </form>
+        </section>
+    {#Y si el usuario no esta autenticado se le da la opcion de iniciar sesion#}
+    {% else %}
+        <p style='margin-top: 30px;'>Debes <a href="{% url 'login' %}?next={{ request.path }}">Iniciar Sesión</a> para dejar un comentario.</p>
+    {% endif %}
+    {#Boton para volver a la pagina principal de posts#}
+    <a href="{% url 'blog:post_list' %}" style='display: block; margin-top: 40px;'>← Volver al listado</a>
+{% endblock content %}

@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{#Titulo de la pestaña#}
+{% block title %}Confirmar Eliminación{% endblock title %}
+
+{% block content %}
+    {#Mostramos el mensaje de si el usuario en verdad quiere eliminar el post en cuestion object.titulo#}
+    <h1>¿Estas seguro de que quieres eliminar "{{ object.titulo }}"</h1>
+    {#formulario con metodo post#}
+    <form method="post">
+        {% csrf_token %}{#token de seguridad#}
+        <p>Esta opcion no se puede deshacer.</p>
+        <button type='submit'>Sí, eliminar</button>{#boton tipo submit para enviar solicitud post#}
+        <a href="{% url 'blog:post_detail' slug=object.slug %}">Cancelar</a>{#En caso de que no quiera eliminar puede cancelar y se enviara al mismo post que queria eliminar.#}
+    </form>
+{% endblock content %}
