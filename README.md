@@ -41,7 +41,7 @@ La forma más fácil y recomendada de ejecutar este proyecto es usando Docker y 
 
 1.  **Clona el repositorio:**
     ```bash
-    git clone https://github.com/deyby01/blog-usuarios/tree/main
+    git clone https://github.com/deyby01/blog-usuarios
     cd tu-repositorio
     ```
 
