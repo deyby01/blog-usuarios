@@ -12,6 +12,31 @@
         .post-entry { border-bottom: 1px solid #eee; padding-bottom: 1rem; margin-bottom: 1rem; }
         .post-entry:last-child { border-bottom: none; }
         .post-meta { font-size: 0.9em; color: #666; }
+        /* Estilos para el formulario de búsqueda */
+        .search-form input[type="text"] {
+            padding: 0.7rem 1rem;
+            font-size: 1.1rem;
+            border: 1px solid #b3b3ff;
+            border-radius: 6px 0 0 6px;
+            outline: none;
+            width: 250px;
+        }
+
+        .search-form button {
+            padding: 0.7rem 1.5rem;
+            font-size: 1.1rem;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 0 6px 6px 0;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .search-form button:hover {
+            background: #2563eb;
+        }
     </style>
 </head>
 <body>
@@ -19,6 +44,26 @@
     <header>
         {#Mostramos el titulo y lo vinculamos al link de todos los post para que cuando den click vallan al inicio#}
         <h1><a href="{% url 'blog:post_list' %}">El Blog de Django</a></h1>
+        {#Creamos el boton de iniciar o cerrar sesion en la parte derecha arriba segun el usuario, si esta logeado o no#}
+        <nav class='logout-login' style="position: absolute; top:0; right: 0; padding: 1rem;">
+            {% if user.is_authenticated %}
+                {#Si el usuario esta logeado mostramos su nombre y un boton de logout#}
+                <form method='POST' action="{% url 'logout' %}" style="display: flex; align-items: center; gap: 0.5rem; background: #222; padding: 0.5rem 1rem; border-radius: 8px;">
+                    {% csrf_token %}
+                    <span style="color: #a7f3d0; font-size: 1rem;">Hola, {{ user.username }}!</span>
+                    <button type='submit' style="background: #e11d48; color: white; border: none; padding: 0.4rem 1rem; border-radius: 5px; cursor: pointer; font-weight: bold;">
+                        Logout
+                    </button>
+                </form>
+            {% else %}
+                <form style="display: flex; align-items: center; gap: 0.5rem; background: #222; padding: 0.5rem 1rem; border-radius: 8px;">
+                    <span style="color: #a7f3d0;">Hola, Invitado!</span>
+                    <a href="{% url 'login' %}?next={{ request.path }}" style="background: #059669; color: white; padding: 0.4rem 1rem; border-radius: 5px; text-decoration: none; font-weight: bold;">
+                        Iniciar Sesión
+                    </a>
+                </form>
+            {% endif %}
+        </nav>
         {#Si un usuario no esta autenticado o logeado no podra crear posts#}
         {% if user.is_authenticated %}
             {#el boton crear post esta vinculado a la plantilla de crear entonces al darle click sera enviado a la pagina de crear#}
@@ -26,11 +71,13 @@
         {% endif %}
     </header>
     {# Nuestro contenido principal va en la etiqueta main dentro de content ira el contenido que las otras plantillas implementaran#}
-    <nav>
-        <form method='GET' action="{% url 'blog:post_list' %}">
-                <input type="text" name='q' placeholder='Buscar....'>
-                <button type='submit'>Buscar</button>
-            </form>
+    
+    <nav style="text-align: center; margin: 1rem 0;">
+        {# Este formulario permite buscar posts por titulo o contenido#}
+        <form method='GET' action="{% url 'blog:post_list' %}" class="search-form" style="display: inline-flex;">
+            <input type="text" name='q' placeholder='Buscar....'>
+            <button type='submit'>Buscar</button>
+        </form>
     </nav>
     <main class="container">
         {% block content %}

@@ -5,6 +5,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from .forms import PostForm, ComentarioForm
 from django.urls import reverse_lazy
 from django.utils.text import slugify
+from django.db.models import Q
 
 # Create your views here.
 # Reutilizamos las clases de vistas genericas para tener un codigo mas limpio
@@ -22,8 +23,14 @@ class PostListView(ListView):
     context_object_name = 'posts'
     
     def get_queryset(self):
-        return Post.objects.filter(estado='PUBLISHED')
-    
+        query = self.request.GET.get('q') # Obtenemos el parametro de busqueda 'q' de la URL
+        queryset = Post.objects.filter(estado='PUBLISHED')  # Filtramos por estado 'PUBLISHED'
+        if query:
+            queryset = queryset.filter(
+                Q(titulo__icontains=query) | 
+                Q(contenido__icontains=query)
+            )
+        return queryset
 
 class PostDetailView(DetailView):
     """
