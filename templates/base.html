@@ -26,8 +26,15 @@
         {% endif %}
     </header>
     {# Nuestro contenido principal va en la etiqueta main dentro de content ira el contenido que las otras plantillas implementaran#}
+    <nav>
+        <form method='GET' action="{% url 'blog:post_list' %}">
+                <input type="text" name='q' placeholder='Buscar....'>
+                <button type='submit'>Buscar</button>
+            </form>
+    </nav>
     <main class="container">
-        {% block content %}{% endblock content %}
+        {% block content %}
+        {% endblock content %}
     </main>
 </body>
 </html>
